@@ -1,0 +1,29 @@
+GET http://localhost:8000/user/
+Content-Type: application/json
+
+{
+    "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRlYmEwZTNmNzNiNCIsImlhdCI6MTY0MDk4MDM0NX0.uKPbxdnXmVTSqDPgS7gpAGzvRcUBshbpsPvhoPCdRDQ"
+}
+
+###
+
+POST http://localhost:8000/user/signup/
+Content-Type: application/json
+
+{
+    "username": "pvphat",
+    "password": "123456",
+    "fullname": "Phan Van Phat",
+    "email": "pvphat@apcs.fitus.edu.vn",
+    "phoneNumber": "26353632332"
+}
+
+###
+
+POST http://localhost:8000/user/signin/
+Content-Type: application/json
+
+{
+    "username": "pvphat",
+    "password": "123456"
+}

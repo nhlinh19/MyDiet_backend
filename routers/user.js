@@ -1,5 +1,5 @@
 const express = require("express");
-const {getUser} = require('../middleware');
+const getUser = require('../middleware');
 const userRouter = express.Router();
 const userResolver = require('../resolvers/user');
 
