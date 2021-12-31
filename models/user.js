@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 const userSchema = mongoose.Schema(
     {
+        //id???
+        dietitianID:{
+            type: mongoose.Schema.Types.ObjectID,
+            ref: 'User'
+        },
         username: {
             type: String,
             required: true,
@@ -9,26 +14,41 @@ const userSchema = mongoose.Schema(
                 unique: true
             }
         },
-        email: {
+        password : {
+            type: String,
+            required: true
+        },
+        fullname : {
+            type: String,
+            required: true
+        },
+        email : {
             type: String,
             required: true,
             index: {
                 unique: true
             }
         },
-        password: {
+        phoneNumber:{
             type: String,
+            //required: true,
+            index: {
+                unique: true,
+            }
+        },
+        userType : {
+            type: Number, //0: user, 1: dietitian, 2: admin
             required: true
         },
-        avatar: {
-            type: String
+        avatar : {
+            type: String //(path of the image save in cloud)
         },
-        body: {
-            type: String
-        } 
-    },
-    {
-        timestamp: true
+        rating : {
+            type: Number
+        },
+        needUpgrade : {
+            type: Boolean //(If normal user want to upgrade to dietitian)
+        }
     }
 );
 
