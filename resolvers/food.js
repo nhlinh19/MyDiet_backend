@@ -13,9 +13,9 @@ module.exports = {
                 message: "Not enough infomation."
             });
         }
-
+        name = name.trim().toLowerCase();
         try {
-            food = await model.Food.findOne({name: name})
+            food = await model.Food.findOne({name:{$regex: name}})
             if (food == null ){
                 return res.json({
                     status: 0,
