@@ -10,9 +10,14 @@ db.connect(DB_HOST);
 const express = require("express");
 const app = express();
 
+// Help parse request's json body into req.body.
+// Note: Header's content-type must be 'application/json'
+app.use(express.json());
+
 // Define all router.
 const routers = require('./routers');
 app.use('/user', routers.userRouter);
+app.use('/food', routers.foodRouter);
 
 app.use('/', (req,res) => {
     res.send("MyDiet app");
