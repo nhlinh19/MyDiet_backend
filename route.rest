@@ -2,7 +2,7 @@ GET http://localhost:8000/user/
 Content-Type: application/json
 
 {
-    "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRlYmEwZTNmNzNiNCIsImlhdCI6MTY0MDk4MDM0NX0.uKPbxdnXmVTSqDPgS7gpAGzvRcUBshbpsPvhoPCdRDQ"
+    "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRlYmEwZTNmNzNiNCIsImlhdCI6MTY0MDk5MzYxMX0.4jbgoluviUzDgQu-egLKKVG6T7ajpZov8FNuvudgLgw"
 }
 
 ###
@@ -11,11 +11,11 @@ POST http://localhost:8000/user/signup/
 Content-Type: application/json
 
 {
-    "username": "pvphat",
-    "password": "123456",
-    "fullname": "Phan Van Phat",
-    "email": "pvphat@apcs.fitus.edu.vn",
-    "phoneNumber": "26353632332"
+    "username": "nltuong",
+    "password": "245678",
+    "fullname": "Nguyen Lam Tuong",
+    "email": "nltuong19@apcs.fitus.edu.vn",
+    "phoneNumber": "263636363"
 }
 
 ###
@@ -25,25 +25,44 @@ Content-Type: application/json
 
 {
     "username": "pvphat",
-    "password": "123456"
-}
-
-###
-GET http://localhost:8000/food/findfood
-Content-Type: application/json
-
-{
-    "name": "Banana"
+    "password": "645321"
 }
 
 ###
 
-GET http://localhost:8000/post/uploadpost
+POST http://localhost:8000/user/change_password/
 Content-Type: application/json
 
 {
-    "postType" : true,
-    "dateTime" : "2021-01-01",
-    "content" : "Happy new year!",
-    "image" : "None"
+    "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRlYmEwZTNmNzNiNCIsImlhdCI6MTY0MDk5MzYxMX0.4jbgoluviUzDgQu-egLKKVG6T7ajpZov8FNuvudgLgw",
+    "oldPassword": "123456",
+    "newPassword": "645321"
+}
+
+###
+
+POST http://localhost:8000/user/upload_avatar/
+Content-Type: application/json
+
+{
+    "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRlYmEwZTNmNzNiNCIsImlhdCI6MTY0MDk5MzYxMX0.4jbgoluviUzDgQu-egLKKVG6T7ajpZov8FNuvudgLgw"
+}
+
+###
+POST http://localhost:8000/user/update/
+Content-Type: application/json
+
+{
+    "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRlYmEwZTNmNzNiNCIsImlhdCI6MTY0MDk5MzYxMX0.4jbgoluviUzDgQu-egLKKVG6T7ajpZov8FNuvudgLgw",
+    "phoneNumber": "1234556687",
+    "about": "need to get fit"
+}
+
+###
+
+POST http://localhost:8000/user/update_request/
+Content-Type: application/json
+
+{
+    "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRlYmEwZTNmNzNiNCIsImlhdCI6MTY0MDk5MzYxMX0.4jbgoluviUzDgQu-egLKKVG6T7ajpZov8FNuvudgLgw"
 }

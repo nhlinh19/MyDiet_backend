@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const userSchema = mongoose.Schema(
     {
-        //id???
         dietitianID:{
             type: mongoose.Schema.Types.ObjectID,
             ref: 'User'
@@ -29,12 +28,12 @@ const userSchema = mongoose.Schema(
                 unique: true
             }
         },
-        phoneNumber:{
+        phoneNumber : {
             type: String,
-            //required: true,
-            index: {
-                unique: true,
-            }
+            required: true
+        },
+        about : {
+            type: String
         },
         userType : {
             type: Number, //0: user, 1: dietitian, 2: admin

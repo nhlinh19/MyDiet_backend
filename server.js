@@ -14,20 +14,36 @@ const app = express();
 // Note: Header's content-type must be 'application/json'
 app.use(express.json());
 
+// Security and CORS
+const helmet = require('helmet');
+const cors = require('cors');
+app.use(helmet());
+app.use(cors());
+
+app.get('/', (req, res) => {
+    req.body = {
+        username: "nltuong", 
+        fullname: "Nguyen Lam Tuong", 
+        email: "nltuong@gmail.com", 
+        password: "1234568", 
+        phoneNumber: "93429384983"
+    };
+    console.log(req.body);
+    res.send("myDiet");
+})
+
 // Define all router.
 const routers = require('./routers');
 app.use('/user', routers.userRouter);
 app.use('/food', routers.foodRouter);
 app.use('/post', routers.postRouter);
 
-app.use('/', (req,res) => {
-    res.send("MyDiet app");
-});
-
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
     console.log(`Listening on port ${port}!`)
 });
+
+
 
 
 
