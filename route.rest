@@ -82,6 +82,16 @@ Content-Type: application/json
 }
 
 ###
+
+GET http://localhost:3000/post/commentpost
+Content-Type: application/json
+
+{
+    "dateTime" : "2021-01-01",
+    "content" : "Happy new year!"
+}
+
+###
 GET http://localhost:8000/user/dietitian_list/
 
 ###
