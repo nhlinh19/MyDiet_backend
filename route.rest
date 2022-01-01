@@ -1,9 +1,5 @@
 GET http://localhost:8000/user/
-Content-Type: application/json
-
-{
-    "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRlYmEwZTNmNzNiNCIsImlhdCI6MTY0MDk5MzYxMX0.4jbgoluviUzDgQu-egLKKVG6T7ajpZov8FNuvudgLgw"
-}
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRlYmEwZTNmNzNiNCIsImlhdCI6MTY0MTAzMjYyMH0.Dqbk_Dv5R2jI29pKBO0tZ1IDdj4YXAvYx7ujrChaSfo
 
 ###
 
@@ -24,8 +20,8 @@ POST http://localhost:8000/user/signin/
 Content-Type: application/json
 
 {
-    "username": "pvphat",
-    "password": "645321"
+    "username": "nltuong",
+    "password": "245678"
 }
 
 ###
@@ -61,8 +57,51 @@ Content-Type: application/json
 ###
 
 POST http://localhost:8000/user/update_request/
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y5YjYyMWFiODdjMzRlMGI3YzcxZSIsImlhdCI6MTY0MTA0MDAzOH0.gfvC1nDMmp3pStzrj4Vce8251XzaTua0Lnah0fe2QuI
+
+
+###
+
+GET http://localhost:8000/food/findfood
 Content-Type: application/json
 
 {
-    "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRlYmEwZTNmNzNiNCIsImlhdCI6MTY0MDk5MzYxMX0.4jbgoluviUzDgQu-egLKKVG6T7ajpZov8FNuvudgLgw"
+    "name": "Banana"
+}
+
+###
+
+GET http://localhost:8000/post/uploadpost
+Content-Type: application/json
+
+{
+    "postType" : true,
+    "dateTime" : "2021-01-01",
+    "content" : "Happy new year!",
+    "image" : "None"
+}
+
+###
+GET http://localhost:8000/user/dietitian_list/
+
+###
+GET http://localhost:8000/user/request_list/
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRlYmEwZTNmNzNiNCIsImlhdCI6MTY0MTAzMjYyMH0.Dqbk_Dv5R2jI29pKBO0tZ1IDdj4YXAvYx7ujrChaSfo
+
+###
+POST http://localhost:8000/user/add_dietitian/
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRlYmEwZTNmNzNiNCIsImlhdCI6MTY0MTAzMjYyMH0.Dqbk_Dv5R2jI29pKBO0tZ1IDdj4YXAvYx7ujrChaSfo
+Content-Type: application/json
+
+{
+    "username" : "nltuong"
+}
+
+###
+POST http://localhost:8000/user/remove_dietitian/
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRlYmEwZTNmNzNiNCIsImlhdCI6MTY0MTAzMjYyMH0.Dqbk_Dv5R2jI29pKBO0tZ1IDdj4YXAvYx7ujrChaSfo
+Content-Type: application/json
+
+{
+    "username" : "nltuong"
 }

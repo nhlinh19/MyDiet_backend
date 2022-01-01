@@ -33,6 +33,10 @@ user
 	change_password
 		oldPassword
 		newPassword
-	update_request
-	personal_dietitian
+	update_request		//user
+	personal_dietitian	//user
 	upload_avatar
+	dietitian_list
+	request_list		//admin
+	add_dietitian		//admin
+	remove_dietitian	//admin

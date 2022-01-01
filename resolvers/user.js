@@ -411,7 +411,136 @@ module.exports = {
         return res.json({
             status: 1,
             message: 'Get personal dietitian successfully.',
-            data: dietitianID
+            data: dietitian
         });
+    },
+    dietitianList: async (req, res) => {
+        const dList = await model.User.find({userType: 1})
+        return res.json({
+            status: 1,
+            message: 'Get dietitian list successfully.',
+            data: dList
+        })
+    },
+    requestList: async (req, res) => {
+        const user = await model.User.findById(req.user.id);
+        if (!user) {
+            return res.json({
+                status: 0,
+                message: 'Not valid user.'
+            });
+        }
+
+        if (user.userType != 2) {
+            return res.json({
+                status: 0,
+                message: 'Current account is not admin account.'
+            });
+        }
+
+        const rList = await model.User.find({userType: 0, needUpgrade: true})
+        return res.json({
+            status: 1,
+            message: 'Get request list successfully.',
+            data: rList
+        })
+    },
+    addDietitian: async (req, res) => {
+        const user = await model.User.findById(req.user.id);
+        if (!user) {
+            return res.json({
+                status: 0,
+                message: 'Not valid user.'
+            });
+        }
+
+        if (user.userType != 2) {
+            return res.json({
+                status: 0,
+                message: 'Current account is not admin account.'
+            });
+        }
+        
+        try {
+            const updatedUser = await model.User.findOneAndUpdate(
+                {
+                    $and: [{username: req.body.username}, 
+                        {userType: 0}, 
+                        {needUpgrade: true}]
+                },
+                {
+                    $set: {
+                        userType: 1,
+                        needUpgrade: false,
+                    }
+                },
+                {
+                    new: true
+                }
+            );
+            
+            updatedUser.password = undefined;
+            updatedUser.ignored_list = undefined;
+
+            return res.json({
+                status: 1,
+                message: 'Successfully add dietitian.',
+                data: updatedUser
+            });
+        }
+        catch (error) {
+            return res.json({
+                status: 0,
+                message: 'Error in adding dietitian.'
+            });
+        }
+    },
+    removeDietitian: async (req, res) => {
+        const user = await model.User.findById(req.user.id);
+        if (!user) {
+            return res.json({
+                status: 0,
+                message: 'Not valid user.'
+            });
+        }
+
+        if (user.userType != 2) {
+            return res.json({
+                status: 0,
+                message: 'Current account is not admin account.'
+            });
+        }
+        
+        try {
+            const updatedUser = await model.User.findOneAndUpdate(
+                {
+                    $and: [{username: req.body.username},
+                        {userType: 1}]    
+                },
+                {
+                    $set: {
+                        userType: 0
+                    }
+                },
+                {
+                    new: true
+                }
+            );
+            
+            updatedUser.password = undefined;
+            updatedUser.ignored_list = undefined;
+
+            return res.json({
+                status: 1,
+                message: 'Successfully remove dietitian.',
+                data: updatedUser
+            });
+        }
+        catch (error) {
+            return res.json({
+                status: 0,
+                message: 'Error in removing dietitian.'
+            });
+        }
     }
 }

@@ -11,5 +11,9 @@ userRouter.post('/change_password', getUser, userResolver.changePassword);
 userRouter.post('/update_request', getUser, userResolver.requestTobeDietitian);
 userRouter.get('/personal_dietitian', getUser, userResolver.myPersonalDietitian);
 userRouter.post('/upload_avatar', getUser, userResolver.uploadAvatar);
+userRouter.get('/dietitian_list', userResolver.dietitianList);
+userRouter.get('/request_list', getUser, userResolver.requestList);
+userRouter.post('/add_dietitian', getUser, userResolver.addDietitian);
+userRouter.post('/remove_dietitian', getUser, userResolver.removeDietitian);
 
 module.exports = userRouter;    
