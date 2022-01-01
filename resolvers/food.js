@@ -15,14 +15,18 @@ module.exports = {
         }
         name = name.trim().toLowerCase();
         try {
-            food = await model.Food.findOne({name:{$regex: name}})
+            food = await model.Food.find({name:{$regex: name}})
             if (food == null ){
                 return res.json({
                     status: 0,
                     message: 'Food is not available.'
                 })
             }
-            return res.json(food)
+            return res.json({
+                status: 1,
+                message: "Food has been found.",
+                data : food
+            })
         }
         catch (error) {
             return res.json({

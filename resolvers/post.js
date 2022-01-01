@@ -36,7 +36,57 @@ module.exports = {
                 console.error(err)
             });
 
-            return res.json(post);
+            return res.json({
+                status : 1,
+                message: "Post successfully.",
+                data: post
+            });
+        }
+        catch (error){
+            return res.json({
+                status: 0,
+                message: "Unexpected error."
+            })
+        }
+    },
+    commentPost: async (req, res) =>{
+        let {
+            /*userID,
+            postID,*/
+            dateTime,
+            content
+        } = req.body;
+
+        if (/*!userID || !postID || */!dateTime || !content){
+            return res.json({
+                status: 0,
+                message: "Not enough information."
+            });
+        }
+
+        try {
+            user = await model.User.findOne();
+            post = await model.Post.findOne();
+            const comment = new model.Comment({
+                userID : user.id,
+                postID : post.id,
+                dateTime : dateTime,
+                content : content,
+            });
+
+            await comment.save()
+            .then(doc => {
+                console.log(doc)
+            })
+            .catch(err => {
+                console.error(err)
+            });
+
+            return res.json({
+                status: 1,
+                message: "Comment successfully.",
+                data : comment
+            });
         }
         catch (error){
             return res.json({
