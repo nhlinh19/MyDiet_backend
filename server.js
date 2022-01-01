@@ -18,6 +18,7 @@ app.use(express.json());
 const routers = require('./routers');
 app.use('/user', routers.userRouter);
 app.use('/food', routers.foodRouter);
+app.use('/post', routers.postRouter);
 
 app.use('/', (req,res) => {
     res.send("MyDiet app");

@@ -35,3 +35,15 @@ Content-Type: application/json
 {
     "name": "Banana"
 }
+
+###
+
+GET http://localhost:8000/post/uploadpost
+Content-Type: application/json
+
+{
+    "postType" : true,
+    "dateTime" : "2021-01-01",
+    "content" : "Happy new year!",
+    "image" : "None"
+}
