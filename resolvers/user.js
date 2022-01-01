@@ -385,6 +385,77 @@ module.exports = {
             });
         }
     },
+    registerDietitian: async (req, res) => {
+        const user = await model.User.findById(req.user.id);
+        if (!user) {
+            return res.json({
+                status: 0,
+                message: 'Not valid user.'
+            });
+        }
+        
+        if (user.userType != 0) {
+            return res.json({
+                status: 0,
+                message: 'Current account is not user account.'
+            });
+        }
+        if (user.dietitianID) {
+            return res.json({
+                status: 0,
+                message: 'User has been assigned to a personal dietitian.'
+            });
+        }
+        dietitianID = req.body._id;
+        if (dietitianID) {
+            const findDietitian = await model.User.findById(dietitianID);
+            if (!findDietitian){
+                return res.json({
+                    status: 0,
+                    message: 'Dietitian id is undefined.'
+                })
+            }
+        }
+        else
+        {
+            return res.json({
+                status: 0,
+                message: 'Dietitian id is undefined.'
+            })
+        }
+
+        try {
+            const updatedUser = await model.User.findOneAndUpdate(
+                {
+                    $and: [{_id: user._id},
+                        {userType: 0}]    
+                },
+                {
+                    $set: {
+                        dietitianID: dietitianID
+                    }
+                },
+                {
+                    new: true
+                }
+            );
+            
+            updatedUser.password = undefined;
+            updatedUser.ignored_list = undefined;
+
+            return res.json({
+                status: 1,
+                message: 'Successfully register dietitian.',
+                data: updatedUser
+            });
+        }
+        catch (error) {
+            return res.json({
+                status: 0,
+                message: 'Error in register dietitian.'
+            });
+        }
+    },
     myPersonalDietitian: async (req, res) => {
         const user = await model.User.findById(req.user.id);
         if (!user) {
@@ -414,7 +485,43 @@ module.exports = {
             data: dietitian
         });
     },
+    clientList: async (req, res) => {
+        const user = await model.User.findById(req.user.id);
+        if (!user) {
+            return res.json({
+                status: 0,
+                message: 'Not valid user.'
+            });
+        }
+
+        if (user.userType != 1) {
+            return res.json({
+                status: 0,
+                message: 'Current account is not dietitian account.'
+            });
+        }
+
+        const cList = await model.User.find(
+            {
+                $and: [{dietitianID: user._id},
+                    {userType: 0}]
+            }
+        );
+        return res.json({
+            status: 1,
+            message: 'Get client list successfully.',
+            data: cList
+        })
+    },
     dietitianList: async (req, res) => {
+        const user = await model.User.findById(req.user.id);
+        if (!user) {
+            return res.json({
+                status: 0,
+                message: 'Not valid user.'
+            });
+        }
+        
         const dList = await model.User.find({userType: 1})
         return res.json({
             status: 1,
@@ -438,7 +545,12 @@ module.exports = {
             });
         }
 
-        const rList = await model.User.find({userType: 0, needUpgrade: true})
+        const rList = await model.User.find(
+            {
+                $and: [{userType: 0}, 
+                    {needUpgrade: true}]
+            }
+        )
         return res.json({
             status: 1,
             message: 'Get request list successfully.',
@@ -460,11 +572,28 @@ module.exports = {
                 message: 'Current account is not admin account.'
             });
         }
-        
+        const userID = req.body._id;
+        if (userID) {
+            const findUser = await model.User.findById(userID);
+            if (!findUser){
+                return res.json({
+                    status: 0,
+                    message: 'User id is undefined.'
+                })
+            }
+        }
+        else
+        {
+            return res.json({
+                status: 0,
+                message: 'User id is undefined.'
+            })
+        }
+
         try {
             const updatedUser = await model.User.findOneAndUpdate(
                 {
-                    $and: [{username: req.body.username}, 
+                    $and: [{_id: userID}, 
                         {userType: 0}, 
                         {needUpgrade: true}]
                 },
@@ -510,11 +639,28 @@ module.exports = {
                 message: 'Current account is not admin account.'
             });
         }
-        
+        dietitianID = req.body._id;
+        if (dietitianID) {
+            const findDietitian = await model.User.findById(dietitianID);
+            if (!findDietitian){
+                return res.json({
+                    status: 0,
+                    message: 'Dietitian id is undefined.'
+                })
+            }
+        }
+        else
+        {
+            return res.json({
+                status: 0,
+                message: 'Dietitian id is undefined.'
+            })
+        }
+
         try {
-            const updatedUser = await model.User.findOneAndUpdate(
+            const updatedDietitian = await model.User.findOneAndUpdate(
                 {
-                    $and: [{username: req.body.username},
+                    $and: [{_id: dietitianID},
                         {userType: 1}]    
                 },
                 {
@@ -526,14 +672,28 @@ module.exports = {
                     new: true
                 }
             );
-            
-            updatedUser.password = undefined;
-            updatedUser.ignored_list = undefined;
+            const updatedUser = await model.User.updateMany(
+                {
+                    $and: [{dietitianID: dietitianID},
+                        {userType: 0}]    
+                },
+                {
+                    $set: {
+                        dietitianID: null
+                    }
+                },
+                {
+                    new: true
+                }
+            );
+
+            updatedDietitian.password = undefined;
+            updatedDietitian.ignored_list = undefined;
 
             return res.json({
                 status: 1,
                 message: 'Successfully remove dietitian.',
-                data: updatedUser
+                data: updatedDietitian
             });
         }
         catch (error) {

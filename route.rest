@@ -7,11 +7,11 @@ POST http://localhost:8000/user/signup/
 Content-Type: application/json
 
 {
-    "username": "nltuong",
-    "password": "245678",
-    "fullname": "Nguyen Lam Tuong",
-    "email": "nltuong19@apcs.fitus.edu.vn",
-    "phoneNumber": "263636363"
+    "username": "nptlam",
+    "password": "321456",
+    "fullname": "Nguyen Pham Tung Lam",
+    "email": "nptlam19@apcs.fitus.edu.vn",
+    "phoneNumber": "2663736363"
 }
 
 ###
@@ -56,12 +56,6 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/user/update_request/
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y5YjYyMWFiODdjMzRlMGI3YzcxZSIsImlhdCI6MTY0MTA0MDAzOH0.gfvC1nDMmp3pStzrj4Vce8251XzaTua0Lnah0fe2QuI
-
-
-###
-
 GET http://localhost:8000/food/findfood
 Content-Type: application/json
 
@@ -82,7 +76,12 @@ Content-Type: application/json
 }
 
 ###
+POST http://localhost:8000/user/update_request/
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y5YjYyMWFiODdjMzRlMGI3YzcxZSIsImlhdCI6MTY0MTA0MDAzOH0.gfvC1nDMmp3pStzrj4Vce8251XzaTua0Lnah0fe2QuI
+
+###
 GET http://localhost:8000/user/dietitian_list/
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y5YjYyMWFiODdjMzRlMGI3YzcxZSIsImlhdCI6MTY0MTA0MDAzOH0.gfvC1nDMmp3pStzrj4Vce8251XzaTua0Lnah0fe2QuI
 
 ###
 GET http://localhost:8000/user/request_list/
@@ -94,7 +93,7 @@ authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRl
 Content-Type: application/json
 
 {
-    "username" : "nltuong"
+    "_id" : "61cf9b621ab87c34e0b7c71e"
 }
 
 ###
@@ -103,5 +102,18 @@ authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y1ODY3OTEzOWRl
 Content-Type: application/json
 
 {
-    "username" : "nltuong"
+    "_id" : "61cf9b621ab87c34e0b7c71e"
 }
+
+###
+POST http://localhost:8000/user/register_dietitian/
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZDA0ZjQ5NzY3MjNhY2U4OTJhOTkzMyIsImlhdCI6MTY0MTA0MTczN30.VOYQya3ttzeK8LME34rNRB0-0RCaOKwFybEzZCptw0s
+Content-Type: application/json
+
+{
+    "_id" : "61cf9b621ab87c34e0b7c71e"
+}
+
+###
+GET http://localhost:8000/user/client_list/
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y5YjYyMWFiODdjMzRlMGI3YzcxZSIsImlhdCI6MTY0MTA0MDAzOH0.gfvC1nDMmp3pStzrj4Vce8251XzaTua0Lnah0fe2QuI

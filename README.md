@@ -34,9 +34,14 @@ user
 		oldPassword
 		newPassword
 	update_request		//user
+	register_dietitian	//user
+		_id
 	personal_dietitian	//user
 	upload_avatar
+	client_list		//dietitian
 	dietitian_list
 	request_list		//admin
 	add_dietitian		//admin
+		_id
 	remove_dietitian	//admin
+		_id
