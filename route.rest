@@ -92,7 +92,7 @@ authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y5YjYyMWFiODdj
 Content-Type: application/json
 
 {
-    "type" : true
+    "type" : false
 }
 
 ###

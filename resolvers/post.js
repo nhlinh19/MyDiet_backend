@@ -186,10 +186,15 @@ module.exports = {
                 };
             }
             
-            const posts = await model.Post.find({cursorQuery, postType : type})
+            posts = await model.Post.find({cursorQuery, postType : type})
                         .sort({id: -1})
                         .limit(limit);
- 
+            if (type){
+                posts = await model.Post.find({cursorQuery, ownerID: user._id, postType : type})
+                        .sort({id: -1})
+                        .limit(limit);
+            }
+
             const postFeed = await Promise.all(
                 posts.map(async post => {
                     const owner = await model.User.findById(post.ownerID);

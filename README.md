@@ -13,6 +13,13 @@ user
 	avatar
 	rating
 	needUpgrade
+food
+	name
+	unit
+	calories
+	carbs
+	fat
+	protein
 
 # Resolver
 user
@@ -45,3 +52,5 @@ user
 		_id
 	remove_dietitian	//admin
 		_id
+food
+	
