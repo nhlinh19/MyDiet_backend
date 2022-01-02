@@ -1,7 +1,7 @@
 # MyDiet_backend
 
-# Model
-user
+## Model
+### user
 	dietitianID
 	username
 	password
@@ -13,7 +13,21 @@ user
 	avatar
 	rating
 	needUpgrade
-food
+### post
+	ownerID
+    postType
+    dateTime
+    content
+    image
+### comment
+	userID
+    postID
+    dateTime
+    content
+### like
+	userID
+    postID
+### food
 	name
 	unit
 	calories
@@ -21,7 +35,7 @@ food
 	fat
 	protein
 
-# Resolver
+## Resolver
 user
 	signUp
 		username
@@ -52,5 +66,21 @@ user
 		_id
 	remove_dietitian	//admin
 		_id
+post
+	uploadPost
+		req.body.postType
+		req.body.content
+		req.body.image
+	commentPost
+		req.body.postID
+		req.body.content
+	getPostList
+		req.query -> _id cua post cuoi cung hien thi trong feed
+		req.body.type
+
+	toggleLike
+		req.body.postID
 food
+	findFood
+		req.body.name
 	
