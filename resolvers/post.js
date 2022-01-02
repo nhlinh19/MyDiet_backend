@@ -112,21 +112,20 @@ module.exports = {
                 });
             }
             let {
-                //postID,
+                postID,
                 content
             } = req.body;
 
-            if (!content){
+            if (!content || !postID){
                 return res.json({
                     status: 0,
-                    message: "Content must not be empty."
+                    message: "Not enough information."
                 });
             }
 
-            post = await model.Post.findOne();
             const comment = new model.Comment({
                 userID : mongoose.Types.ObjectId(user._id),
-                postID : post.id,
+                postID : postID,
                 dateTime : Date(),
                 content : content,
             });
@@ -219,6 +218,58 @@ module.exports = {
                     postFeed,
                     cursor: newCursor
                 }
+            });
+        }
+        catch (error){
+            return res.json({
+                status: 0,
+                message: "Unexpected error."
+            })
+        }
+    },
+    toggleLike : async (req, res) =>{
+        try{
+            const user = await model.User.findById(req.user.id);
+            if (!user) {
+                return res.json({
+                    status: 0,
+                    message: 'Not valid user.'
+                });
+            }
+
+            let {
+                postID
+            } = req.body;
+
+            if (!postID){
+                return res.json({
+                    status: 0,
+                    message: "Not enough information."
+                });
+            }
+
+            const isLiked = await model.Like.find({userID: user._id, postID : postID}).count();
+            
+            if (isLiked <= 0){
+                const like = new model.Like({
+                    userID : mongoose.Types.ObjectId(user._id),
+                    postID : postID
+                });
+    
+                await like.save()
+                .then(doc => {
+                    console.log(doc)
+                })
+                .catch(err => {
+                    console.error(err)
+                });
+            }
+            else {
+                await model.Like.deleteOne({userID : user._id, postID : postID});
+            }
+            return res.json({
+                status: 1,
+                message : "Toggle successfully"
             });
         }
         catch (error){
