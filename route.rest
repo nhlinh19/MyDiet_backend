@@ -66,23 +66,42 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/post/uploadpost
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y5YjYyMWFiODdjMzRlMGI3YzcxZSIsImlhdCI6MTY0MTA0MDAzOH0.gfvC1nDMmp3pStzrj4Vce8251XzaTua0Lnah0fe2QuI
 Content-Type: application/json
 
 {
     "postType" : true,
-    "dateTime" : "2021-01-01",
     "content" : "Happy new year!",
     "image" : "None"
 }
 
 ###
 
-GET http://localhost:3000/post/commentpost
+GET http://localhost:8000/post/commentpost
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y5YjYyMWFiODdjMzRlMGI3YzcxZSIsImlhdCI6MTY0MTA0MDAzOH0.gfvC1nDMmp3pStzrj4Vce8251XzaTua0Lnah0fe2QuI
 Content-Type: application/json
 
 {
-    "dateTime" : "2021-01-01",
+    "postID" : "61d122a2ff9404df1447dd1d",
     "content" : "Happy new year!"
+}
+
+###
+GET http://localhost:8000/post/getpostlist?_id=61d1521f56b987f68ee919cf
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y5YjYyMWFiODdjMzRlMGI3YzcxZSIsImlhdCI6MTY0MTA0MDAzOH0.gfvC1nDMmp3pStzrj4Vce8251XzaTua0Lnah0fe2QuI
+Content-Type: application/json
+
+{
+    "type" : true
+}
+
+###
+GET http://localhost:8000/post/togglelike
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y5YjYyMWFiODdjMzRlMGI3YzcxZSIsImlhdCI6MTY0MTA0MDAzOH0.gfvC1nDMmp3pStzrj4Vce8251XzaTua0Lnah0fe2QuI
+Content-Type: application/json
+
+{
+    "postID":"61d122a2ff9404df1447dd1d"
 }
 
 ###
