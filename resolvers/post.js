@@ -67,7 +67,7 @@ module.exports = {
                 image
             } = req.body;
     
-            if (!postType || (!content && !image)){
+            if (postType == null || (!content && !image)){
                 return res.json({
                     status: 0,
                     message: "Not enough information."
@@ -151,5 +151,81 @@ module.exports = {
                 message: "Unexpected error."
             })
         }
-    }
+    },
+    getPostList : async (req, res) =>{
+        try{
+            const user = await model.User.findById(req.user.id);
+            if (!user) {
+                return res.json({
+                    status: 0,
+                    message: 'Not valid user.'
+                });
+            }
+
+            let {
+                type
+            } = req.body;
+
+            if (type == null){
+                return res.json({
+                    status: 0,
+                    message: "Type must not be empty."
+                });
+            }
+
+            // Set limit 20 posts per request
+            const limit = 20;
+            const {cursor} = req.query;
+
+            let cursorQuery = {};
+
+            if (cursor) {
+                cursorQuery = {
+                    _id: {
+                        $lt: cursor
+                    }
+                };
+            }
+            
+            const posts = await model.Post.find({cursorQuery, postType : type})
+                        .sort({id: -1})
+                        .limit(limit);
+ 
+            const postFeed = await Promise.all(
+                posts.map(async post => {
+                    const owner = await model.User.findById(post.ownerID);
+                    return {
+                        _id: post._id,
+                        ownerID: {
+                            _id: post.ownerID,
+                            name: owner.fullname,
+                        },
+                        dateTime: post.dateTime,
+                        content: post.content,
+                        image: post.image
+                    }
+                })
+            )
+
+            let newCursor = '';
+            if (posts.length > 0) {
+                newCursor = posts[posts.length - 1]._id;
+            }
+
+            return res.json({
+                status: 1,
+                message: 'Successful post feed retrieval.',
+                data: {
+                    postFeed,
+                    cursor: newCursor
+                }
+            });
+        }
+        catch (error){
+            return res.json({
+                status: 0,
+                message: "Unexpected error."
+            })
+        }
+    },
 }
