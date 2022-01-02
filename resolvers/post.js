@@ -198,6 +198,7 @@ module.exports = {
             const postFeed = await Promise.all(
                 posts.map(async post => {
                     const owner = await model.User.findById(post.ownerID);
+                    const numLike = await model.Like.find({postID : post._id}).count();
                     return {
                         _id: post._id,
                         ownerID: {
@@ -206,7 +207,8 @@ module.exports = {
                         },
                         dateTime: post.dateTime,
                         content: post.content,
-                        image: post.image
+                        image: post.image,
+                        numLike : numLike
                     }
                 })
             )
@@ -272,9 +274,79 @@ module.exports = {
             else {
                 await model.Like.deleteOne({userID : user._id, postID : postID});
             }
+            numLike = await model.Like.find({postID : postID}).count();
             return res.json({
                 status: 1,
-                message : "Toggle successfully"
+                message : "Toggle successfully",
+                numLike : numLike
+            });
+        }
+        catch (error){
+            return res.json({
+                status: 0,
+                message: "Unexpected error."
+            })
+        }
+    },
+    getComment: async (req, res) =>{
+        try{
+            
+            let {
+                postID
+            } = req.body;
+
+            if (!postID){
+                return res.json({
+                    status: 0,
+                    message: "PostID must not be empty"
+                });
+            }
+
+            // Set limit 20 comments per request
+            const limit = 20;
+            const {cursor} = req.query;
+
+            let cursorQuery = {};
+
+            if (cursor) {
+                cursorQuery = {
+                    _id: {
+                        $lt: cursor
+                    }
+                };
+            }
+            
+            const comments = await model.Comment.find({cursorQuery, postID : postID})
+                        .sort({id: -1})
+                        .limit(limit);
+
+            const commentFeed = await Promise.all(
+                comments.map(async comment => {
+                    const owner = await model.User.findById(comment.userID);
+                    return {
+                        _id: comment._id,
+                        ownerID: {
+                            _id: comment.userID,
+                            name: owner.fullname,
+                        },
+                        dateTime: comment.dateTime,
+                        content: comment.content
+                    }
+                })
+            )
+
+            let newCursor = '';
+            if (comments.length > 0) {
+                newCursor = comments[comments.length - 1]._id;
+            }
+
+            return res.json({
+                status: 1,
+                message: 'Successful post feed retrieval.',
+                data: {
+                    commentFeed,
+                    cursor: newCursor
+                }
             });
         }
         catch (error){

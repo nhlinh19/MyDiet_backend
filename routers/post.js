@@ -19,4 +19,7 @@ postRouter.get('/getpostlist', getUser, postResolver.getPostList);
 // req.body.postID
 postRouter.get('/togglelike', getUser, postResolver.toggleLike);
 
+// req.body.postID
+postRouter.get('/getcomment', postResolver.getComment);
+
 module.exports = postRouter;
