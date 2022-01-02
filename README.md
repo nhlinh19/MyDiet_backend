@@ -70,7 +70,6 @@
 	uploadPost
 		req.body.postType
 		req.body.content
-		req.body.image
 	commentPost
 		req.body.postID
 		req.body.content

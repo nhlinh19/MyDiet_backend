@@ -71,8 +71,7 @@ Content-Type: application/json
 
 {
     "postType" : true,
-    "content" : "Happy new year!",
-    "image" : "None"
+    "content" : "Happy new year!"
 }
 
 ###

@@ -1,6 +1,8 @@
 const model = require('../models')
 const mongoose = require('mongoose')
 const multiparty = require('multiparty');
+const fs = require('fs');
+const { uploadImage } = require('../utils');
 
 module.exports = {
     uploadPost: async (req, res) =>{
@@ -13,72 +15,23 @@ module.exports = {
                 });
             }
 
-            /*const form = new multiparty.Form();
-            form.parse(req, async (error, fields, files) => {
-                if (error) {
-                    return res.json({
-                        status: 0,
-                        message: 'Cannot parse information.'
-                    });
-                }
-
-                let {
-                    postType,
-                    content
-                } = fields;
-                let {
-                    image
-                } = files;
-    
-                if (!postType || (!content && !image)){
-                    return res.json({
-                        status: 0,
-                        message: "Not enough information."
-                    });
-                }
-                
-                const post = new model.Post({
-                    ownerID : mongoose.Types.ObjectId(user._id),
-                    postType : postType,
-                    dateTime : new Date(),
-                    content : content
-                });
-
-                await post.save()
-                .then(doc => {
-                    console.log(doc)
-                })
-                .catch(err => {
-                    console.error(err)
-                });
-
-                //Post image
-
-                return res.json({
-                    status : 1,
-                    message: "Post successfully.",
-                    data: post
-                });
-            })*/
-
             let {
                 postType,
-                content,
-                image
+                content
             } = req.body;
     
-            if (postType == null || (!content && !image)){
+            if (postType == null || !content){
                 return res.json({
                     status: 0,
                     message: "Not enough information."
                 });
             }
+
             const post = new model.Post({
                 ownerID : mongoose.Types.ObjectId(user._id),
                 postType : postType,
                 dateTime : new Date(),
-                content : content,
-                image : image
+                content : content
             });
 
             await post.save()
@@ -87,6 +40,42 @@ module.exports = {
             })
             .catch(err => {
                 console.error(err)
+            });
+
+            const form = new multiparty.Form();
+            form.parse(req, async (error, fields, files) => {
+                if (error) {
+                    return res.json({
+                        status: 0,
+                        message: 'Cannot parse image.'
+                    });
+                }
+                let {
+                    image
+                } = files;
+
+                const imgUrls = [];
+                for (let i = 0; i < image.length; i++) {
+                    const imgStream = await fs.readFileSync(image[i].path);
+                    const location = await uploadImage(imgStream, `posts/${post._id}/${image[i].originalFilename}`);
+                    if (location) {
+                        imgUrls.push(location);
+                    }
+                }
+
+                post = await model.Post.findOneAndUpdate(
+                    {
+                        _id: post._id
+                    },
+                    {
+                        $set: {
+                            img: imgUrls
+                        }
+                    },
+                    {
+                        new: true
+                    }
+                );
             });
 
             return res.json({
