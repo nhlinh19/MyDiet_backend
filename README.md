@@ -36,7 +36,7 @@
 	protein
 
 ## Resolver
-user
+### user
 	signUp
 		username
           	fullname 
@@ -66,7 +66,7 @@ user
 		_id
 	remove_dietitian	//admin
 		_id
-post
+#### post
 	uploadPost
 		req.body.postType
 		req.body.content
@@ -77,10 +77,9 @@ post
 	getPostList
 		req.query -> _id cua post cuoi cung hien thi trong feed
 		req.body.type
-
 	toggleLike
 		req.body.postID
-food
+### food
 	findFood
 		req.body.name
 	
