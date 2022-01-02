@@ -1,29 +1,82 @@
 const model = require('../models')
 const mongoose = require('mongoose')
+const multiparty = require('multiparty');
 
 module.exports = {
     uploadPost: async (req, res) =>{
-        let {
-            //ownerID,
-            postType,
-            dateTime,
-            content,
-            image
-        } = req.body;
+        try{
+            const user = await model.User.findById(req.user.id);
+            if (!user) {
+                return res.json({
+                    status: 0,
+                    message: 'Not valid user.'
+                });
+            }
 
-        if (/*!ownerID ||*/ !postType || !dateTime || (!content & !image)){
-            return res.json({
-                status: 0,
-                message: "Not enough information."
-            });
-        }
+            /*const form = new multiparty.Form();
+            form.parse(req, async (error, fields, files) => {
+                if (error) {
+                    return res.json({
+                        status: 0,
+                        message: 'Cannot parse information.'
+                    });
+                }
 
-        try {
-            user = await model.User.findOne();
+                let {
+                    postType,
+                    content
+                } = fields;
+                let {
+                    image
+                } = files;
+    
+                if (!postType || (!content && !image)){
+                    return res.json({
+                        status: 0,
+                        message: "Not enough information."
+                    });
+                }
+                
+                const post = new model.Post({
+                    ownerID : mongoose.Types.ObjectId(user._id),
+                    postType : postType,
+                    dateTime : new Date(),
+                    content : content
+                });
+
+                await post.save()
+                .then(doc => {
+                    console.log(doc)
+                })
+                .catch(err => {
+                    console.error(err)
+                });
+
+                //Post image
+
+                return res.json({
+                    status : 1,
+                    message: "Post successfully.",
+                    data: post
+                });
+            })*/
+
+            let {
+                postType,
+                content,
+                image
+            } = req.body;
+    
+            if (!postType || (!content && !image)){
+                return res.json({
+                    status: 0,
+                    message: "Not enough information."
+                });
+            }
             const post = new model.Post({
-                ownerID : /*ownerID*/ user.id,
+                ownerID : mongoose.Types.ObjectId(user._id),
                 postType : postType,
-                dateTime : dateTime,
+                dateTime : new Date(),
                 content : content,
                 image : image
             });
@@ -50,27 +103,31 @@ module.exports = {
         }
     },
     commentPost: async (req, res) =>{
-        let {
-            /*userID,
-            postID,*/
-            dateTime,
-            content
-        } = req.body;
+        try{
+            const user = await model.User.findById(req.user.id);
+            if (!user) {
+                return res.json({
+                    status: 0,
+                    message: 'Not valid user.'
+                });
+            }
+            let {
+                //postID,
+                content
+            } = req.body;
 
-        if (/*!userID || !postID || */!dateTime || !content){
-            return res.json({
-                status: 0,
-                message: "Not enough information."
-            });
-        }
+            if (!content){
+                return res.json({
+                    status: 0,
+                    message: "Content must not be empty."
+                });
+            }
 
-        try {
-            user = await model.User.findOne();
             post = await model.Post.findOne();
             const comment = new model.Comment({
-                userID : user.id,
+                userID : mongoose.Types.ObjectId(user._id),
                 postID : post.id,
-                dateTime : dateTime,
+                dateTime : Date(),
                 content : content,
             });
 
