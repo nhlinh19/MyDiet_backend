@@ -18,9 +18,9 @@ const postSchema = mongoose.Schema({
   content: {
     type: String,
   },
-  image: [{
+  image: {
     type: String, //path of the image save in cloud
-  }],
+  },
 });
 
 const Post = mongoose.model("Post", postSchema);
