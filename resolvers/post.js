@@ -1,348 +1,323 @@
-const model = require('../models')
-const mongoose = require('mongoose')
-const multiparty = require('multiparty');
-const fs = require('fs');
-const { uploadImage } = require('../utils');
+const model = require("../models");
+const mongoose = require("mongoose");
+const multiparty = require("multiparty");
+const fs = require("fs");
+const { uploadImage } = require("../utils");
 
 module.exports = {
-    uploadPost: async (req, res) =>{
-        try{
-            const user = await model.User.findById(req.user.id);
-            if (!user) {
-                return res.json({
-                    status: 0,
-                    message: 'Not valid user.'
-                });
-            }
-
-            let {
-                postType,
-                content
-            } = req.body;
-    
-            if (postType == null || !content){
-                return res.json({
-                    status: 0,
-                    message: "Not enough information."
-                });
-            }
-
-            const post = new model.Post({
-                ownerID : mongoose.Types.ObjectId(user._id),
-                postType : postType,
-                dateTime : new Date(),
-                content : content
-            });
-
-            await post.save()
-            .then(doc => {
-                console.log(doc)
-            })
-            .catch(err => {
-                console.error(err)
-            });
-
-            const form = new multiparty.Form();
-            form.parse(req, async (error, fields, files) => {
-                if (error) {
-                    return res.json({
-                        status: 0,
-                        message: 'Cannot parse image.'
-                    });
-                }
-                let {
-                    image
-                } = files;
-
-                const imgUrls = [];
-                for (let i = 0; i < image.length; i++) {
-                    const imgStream = await fs.readFileSync(image[i].path);
-                    const location = await uploadImage(imgStream, `posts/${post._id}/${image[i].originalFilename}`);
-                    if (location) {
-                        imgUrls.push(location);
-                    }
-                }
-
-                post = await model.Post.findOneAndUpdate(
-                    {
-                        _id: post._id
-                    },
-                    {
-                        $set: {
-                            img: imgUrls
-                        }
-                    },
-                    {
-                        new: true
-                    }
-                );
-            });
-
-            return res.json({
-                status : 1,
-                message: "Post successfully.",
-                data: post
-            });
+  uploadPost: async (req, res) => {
+    try {
+      const user = await model.User.findById(req.user.id);
+      if (!user) {
+        return res.json({
+          status: 0,
+          message: "Not valid user.",
+        });
+      }
+      const form = new multiparty.Form();
+      form.parse(req, async (error, fields, files) => {
+        if (error) {
+          return res.json({
+            status: 0,
+            message: "Cannot parse image.",
+          });
         }
-        catch (error){
-            return res.json({
-                status: 0,
-                message: "Unexpected error."
-            })
+
+        const postType = fields.postType[0] === "true";
+        const content = fields.content[0];
+
+        if (postType == null || !content) {
+          return res.json({
+            status: 0,
+            message: "Not enough information.",
+          });
         }
-    },
-    commentPost: async (req, res) =>{
-        try{
-            const user = await model.User.findById(req.user.id);
-            if (!user) {
-                return res.json({
-                    status: 0,
-                    message: 'Not valid user.'
-                });
-            }
-            let {
-                postID,
-                content
-            } = req.body;
+        let post = await model.Post.create({
+          ownerID: mongoose.Types.ObjectId(user._id),
+          postType: postType,
+          dateTime: new Date(),
+          content: content,
+        });
 
-            if (!content || !postID){
-                return res.json({
-                    status: 0,
-                    message: "Not enough information."
-                });
-            }
+        let { image } = files;
+        const imgStream = fs.readFileSync(image[0].path);
+        const location = await uploadImage(
+          imgStream,
+          `posts/${post._id}/${image[0].originalFilename}`
+        );
+        post = await model.Post.findOneAndUpdate(
+          {
+            _id: post._id,
+          },
+          {
+            $set: {
+              image: location,
+            },
+          },
+          { new: true }
+        );
 
-            const comment = new model.Comment({
-                userID : mongoose.Types.ObjectId(user._id),
-                postID : postID,
-                dateTime : Date(),
-                content : content,
-            });
+        return res.json({
+          status: 1,
+          message: "Post successfully.",
+          data: post,
+        });
+      });
+    } catch (error) {
+      return res.json({
+        status: 0,
+        message: "Unexpected error." + error,
+      });
+    }
+  },
+  commentPost: async (req, res) => {
+    try {
+      const user = await model.User.findById(req.user.id);
+      if (!user) {
+        return res.json({
+          status: 0,
+          message: "Not valid user.",
+        });
+      }
+      let { postID, content } = req.body;
 
-            await comment.save()
-            .then(doc => {
-                console.log(doc)
-            })
-            .catch(err => {
-                console.error(err)
-            });
+      if (!content || !postID) {
+        return res.json({
+          status: 0,
+          message: "Not enough information.",
+        });
+      }
 
-            return res.json({
-                status: 1,
-                message: "Comment successfully.",
-                data : comment
-            });
-        }
-        catch (error){
-            return res.json({
-                status: 0,
-                message: "Unexpected error."
-            })
-        }
-    },
-    getPostList : async (req, res) =>{
-        try{
-            const user = await model.User.findById(req.user.id);
-            if (!user) {
-                return res.json({
-                    status: 0,
-                    message: 'Not valid user.'
-                });
-            }
+      const comment = new model.Comment({
+        userID: mongoose.Types.ObjectId(user._id),
+        postID: postID,
+        dateTime: Date(),
+        content: content,
+      });
 
-            let {
-                type
-            } = req.body;
+      await comment
+        .save()
+        .then((doc) => {
+          console.log(doc);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
 
-            if (type == null){
-                return res.json({
-                    status: 0,
-                    message: "Type must not be empty."
-                });
-            }
+      return res.json({
+        status: 1,
+        message: "Comment successfully.",
+        data: comment,
+      });
+    } catch (error) {
+      return res.json({
+        status: 0,
+        message: "Unexpected error.",
+      });
+    }
+  },
+  getPostList: async (req, res) => {
+    try {
+      const user = await model.User.findById(req.user.id);
+      if (!user) {
+        return res.json({
+          status: 0,
+          message: "Not valid user.",
+        });
+      }
 
-            // Set limit 20 posts per request
-            const limit = 20;
-            const {cursor} = req.query;
+      let { type } = req.body;
 
-            let cursorQuery = {};
+      if (type == null) {
+        return res.json({
+          status: 0,
+          message: "Type must not be empty.",
+        });
+      }
 
-            if (cursor) {
-                cursorQuery = {
-                    _id: {
-                        $lt: cursor
-                    }
-                };
-            }
-            
-            posts = await model.Post.find({cursorQuery, postType : type})
-                        .sort({id: -1})
-                        .limit(limit);
-            if (type){
-                posts = await model.Post.find({cursorQuery, ownerID: user._id, postType : type})
-                        .sort({id: -1})
-                        .limit(limit);
-            }
+      // Set limit 20 posts per request
+      const limit = 20;
+      const { cursor } = req.query;
 
-            const postFeed = await Promise.all(
-                posts.map(async post => {
-                    const owner = await model.User.findById(post.ownerID);
-                    const numLike = await model.Like.find({postID : post._id}).count();
-                    return {
-                        _id: post._id,
-                        ownerID: {
-                            _id: post.ownerID,
-                            name: owner.fullname,
-                        },
-                        dateTime: post.dateTime,
-                        content: post.content,
-                        image: post.image,
-                        numLike : numLike
-                    }
-                })
-            )
+      let cursorQuery = {};
 
-            let newCursor = '';
-            if (posts.length > 0) {
-                newCursor = posts[posts.length - 1]._id;
-            }
+      if (cursor) {
+        cursorQuery = {
+          _id: {
+            $lt: cursor,
+          },
+        };
+      }
 
-            return res.json({
-                status: 1,
-                message: 'Successful post feed retrieval.',
-                data: {
-                    postFeed,
-                    cursor: newCursor
-                }
-            });
-        }
-        catch (error){
-            return res.json({
-                status: 0,
-                message: "Unexpected error."
-            })
-        }
-    },
-    toggleLike : async (req, res) =>{
-        try{
-            const user = await model.User.findById(req.user.id);
-            if (!user) {
-                return res.json({
-                    status: 0,
-                    message: 'Not valid user.'
-                });
-            }
+      posts = await model.Post.find({ cursorQuery, postType: type })
+        .sort({ id: -1 })
+        .limit(limit);
+      if (type) {
+        posts = await model.Post.find({
+          cursorQuery,
+          ownerID: user._id,
+          postType: type,
+        })
+          .sort({ id: -1 })
+          .limit(limit);
+      }
 
-            let {
-                postID
-            } = req.body;
+      const postFeed = await Promise.all(
+        posts.map(async (post) => {
+          const owner = await model.User.findById(post.ownerID);
+          const numLike = await model.Like.find({ postID: post._id }).count();
+          return {
+            _id: post._id,
+            owner: {
+              _id: owner._id,
+              avatar: owner.avatar,
+              name: owner.fullname,
+            },
+            dateTime: post.dateTime,
+            content: post.content,
+            image: post.image,
+            numLike: numLike,
+            comments: [],
+          };
+        })
+      );
 
-            if (!postID){
-                return res.json({
-                    status: 0,
-                    message: "Not enough information."
-                });
-            }
+      let newCursor = "";
+      if (posts.length > 0) {
+        newCursor = posts[posts.length - 1]._id;
+      }
 
-            const isLiked = await model.Like.find({userID: user._id, postID : postID}).count();
-            
-            if (isLiked <= 0){
-                const like = new model.Like({
-                    userID : mongoose.Types.ObjectId(user._id),
-                    postID : postID
-                });
-    
-                await like.save()
-                .then(doc => {
-                    console.log(doc)
-                })
-                .catch(err => {
-                    console.error(err)
-                });
-            }
-            else {
-                await model.Like.deleteOne({userID : user._id, postID : postID});
-            }
-            numLike = await model.Like.find({postID : postID}).count();
-            return res.json({
-                status: 1,
-                message : "Toggle successfully",
-                numLike : numLike
-            });
-        }
-        catch (error){
-            return res.json({
-                status: 0,
-                message: "Unexpected error."
-            })
-        }
-    },
-    getComment: async (req, res) =>{
-        try{
-            
-            let {
-                postID
-            } = req.body;
+      return res.json({
+        status: 1,
+        message: "Successful post feed retrieval.",
+        data: {
+          postFeed,
+          cursor: newCursor,
+        },
+      });
+    } catch (error) {
+      return res.json({
+        status: 0,
+        message: "Unexpected error.",
+      });
+    }
+  },
+  toggleLike: async (req, res) => {
+    try {
+      const user = await model.User.findById(req.user.id);
+      if (!user) {
+        return res.json({
+          status: 0,
+          message: "Not valid user.",
+        });
+      }
 
-            if (!postID){
-                return res.json({
-                    status: 0,
-                    message: "PostID must not be empty"
-                });
-            }
+      let { postID } = req.body;
 
-            // Set limit 20 comments per request
-            const limit = 20;
-            const {cursor} = req.query;
+      if (!postID) {
+        return res.json({
+          status: 0,
+          message: "Not enough information.",
+        });
+      }
 
-            let cursorQuery = {};
+      const isLiked = await model.Like.find({
+        userID: user._id,
+        postID: postID,
+      }).count();
 
-            if (cursor) {
-                cursorQuery = {
-                    _id: {
-                        $lt: cursor
-                    }
-                };
-            }
-            
-            const comments = await model.Comment.find({cursorQuery, postID : postID})
-                        .sort({id: -1})
-                        .limit(limit);
+      if (isLiked <= 0) {
+        const like = new model.Like({
+          userID: mongoose.Types.ObjectId(user._id),
+          postID: postID,
+        });
 
-            const commentFeed = await Promise.all(
-                comments.map(async comment => {
-                    const owner = await model.User.findById(comment.userID);
-                    return {
-                        _id: comment._id,
-                        ownerID: {
-                            _id: comment.userID,
-                            name: owner.fullname,
-                        },
-                        dateTime: comment.dateTime,
-                        content: comment.content
-                    }
-                })
-            )
+        await like
+          .save()
+          .then((doc) => {
+            console.log(doc);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      } else {
+        await model.Like.deleteOne({ userID: user._id, postID: postID });
+      }
+      numLike = await model.Like.find({ postID: postID }).count();
+      return res.json({
+        status: 1,
+        message: "Toggle successfully",
+        numLike: numLike,
+      });
+    } catch (error) {
+      return res.json({
+        status: 0,
+        message: "Unexpected error.",
+      });
+    }
+  },
+  getComment: async (req, res) => {
+    try {
+      let { postID } = req.body;
 
-            let newCursor = '';
-            if (comments.length > 0) {
-                newCursor = comments[comments.length - 1]._id;
-            }
+      if (!postID) {
+        return res.json({
+          status: 0,
+          message: "PostID must not be empty",
+        });
+      }
 
-            return res.json({
-                status: 1,
-                message: 'Successful post feed retrieval.',
-                data: {
-                    commentFeed,
-                    cursor: newCursor
-                }
-            });
-        }
-        catch (error){
-            return res.json({
-                status: 0,
-                message: "Unexpected error."
-            })
-        }
-    },
-}
+      // Set limit 20 comments per request
+      const limit = 20;
+      const { cursor } = req.query;
+
+      let cursorQuery = {};
+
+      if (cursor) {
+        cursorQuery = {
+          _id: {
+            $lt: cursor,
+          },
+        };
+      }
+
+      const comments = await model.Comment.find({ cursorQuery, postID: postID })
+        .sort({ id: -1 })
+        .limit(limit);
+
+      const commentFeed = await Promise.all(
+        comments.map(async (comment) => {
+          const owner = await model.User.findById(comment.userID);
+          return {
+            _id: comment._id,
+            ownerID: {
+              _id: comment.userID,
+              name: owner.fullname,
+            },
+            dateTime: comment.dateTime,
+            content: comment.content,
+          };
+        })
+      );
+
+      let newCursor = "";
+      if (comments.length > 0) {
+        newCursor = comments[comments.length - 1]._id;
+      }
+
+      return res.json({
+        status: 1,
+        message: "Successful post feed retrieval.",
+        data: {
+          commentFeed,
+          cursor: newCursor,
+        },
+      });
+    } catch (error) {
+      return res.json({
+        status: 0,
+        message: "Unexpected error.",
+      });
+    }
+  },
+};
