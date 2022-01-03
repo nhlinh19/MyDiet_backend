@@ -20,6 +20,9 @@ const foodSchema = mongoose.Schema(
         },
         protein : {
             type: Number
+        },
+	image : {
+            type: String
         }
     }
 );
