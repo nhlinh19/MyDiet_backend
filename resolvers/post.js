@@ -5,39 +5,39 @@ const fs = require("fs");
 const { uploadImage } = require("../utils");
 
 module.exports = {
-  uploadPost: async (req, res) => {
-    try {
-      const user = await model.User.findById(req.user.id);
-      if (!user) {
-        return res.json({
-          status: 0,
-          message: "Not valid user.",
-        });
-      }
-      const form = new multiparty.Form();
-      form.parse(req, async (error, fields, files) => {
-        if (error) {
-          return res.json({
-            status: 0,
-            message: "Cannot parse image.",
-          });
+    uploadPost: async (req, res) => {
+        try {
+        const user = await model.User.findById(req.user.id);
+        if (!user) {
+            return res.json({
+                status: 0,
+                message: "Not valid user.",
+            });
         }
+        const form = new multiparty.Form();
+            form.parse(req, async (error, fields, files) => {
+                if (error) {
+                    return res.json({
+                        status: 0,
+                        message: 'Cannot parse image.'
+                    });
+                }
+                
+                const postType = fields.postType[0] === "true";
+                const content = fields.content[0];
 
-        const postType = fields.postType[0] === "true";
-        const content = fields.content[0];
-
-        if (postType == null || !content) {
-          return res.json({
-            status: 0,
-            message: "Not enough information.",
-          });
-        }
-        let post = await model.Post.create({
-          ownerID: mongoose.Types.ObjectId(user._id),
-          postType: postType,
-          dateTime: new Date(),
-          content: content,
-        });
+            if (postType == null || !content) {
+                return res.json({
+                    status: 0,
+                    message: "Not enough information.",
+                });
+            }
+            let post = await model.Post.create({
+                ownerID: mongoose.Types.ObjectId(user._id),
+                postType: postType,
+                dateTime: new Date(),
+                content: content,
+            });
 
         let { image } = files;
         const imgStream = fs.readFileSync(image[0].path);
@@ -166,6 +166,21 @@ module.exports = {
         posts.map(async (post) => {
           const owner = await model.User.findById(post.ownerID);
           const numLike = await model.Like.find({ postID: post._id }).count();
+
+          const comments = await model.Comment.find({postID: post._id});
+          const returnedComments = []
+          for (let i =0; i< comments.length(); i++){
+              
+              const commentUser = await model.User.findById(comments[i].userID);
+              let tmpComment = {
+                  content: comments[i].content,
+                  dateTime : comments[i].dateTime,
+                  name : commentUser.fullname,
+                  avatar : commentUser.avatar
+              }
+              returnedComments.push(tmpComment)
+          };
+
           return {
             _id: post._id,
             owner: {
@@ -177,7 +192,7 @@ module.exports = {
             content: post.content,
             image: post.image,
             numLike: numLike,
-            comments: [],
+            comments: returnedComments,
           };
         })
       );
