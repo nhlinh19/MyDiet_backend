@@ -159,6 +159,7 @@ module.exports = {
         .sort({ id: -1 })
         .limit(limit);
       if (type) {
+        if (user.userType == 0){
         posts = await model.Post.find({
           cursorQuery,
           ownerID: user._id,
@@ -166,6 +167,16 @@ module.exports = {
         })
           .sort({ id: -1 })
           .limit(limit);
+        }
+        else if (user.userType == 1){
+          posts = await model.Post.find({
+            cursorQuery,
+            ownerID: {$in: [user._id, user.dietitianID]},
+            postType: type,
+          })
+            .sort({ id: -1 })
+            .limit(limit);
+        }
       }
 
       const postFeed = await Promise.all(

@@ -69,10 +69,6 @@ GET http://localhost:8000/post/uploadpost
 authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxY2Y5YjYyMWFiODdjMzRlMGI3YzcxZSIsImlhdCI6MTY0MTA0MDAzOH0.gfvC1nDMmp3pStzrj4Vce8251XzaTua0Lnah0fe2QuI
 Content-Type: application/json
 
-{
-    "postType" : true,
-    "content" : "Happy new year!"
-}
 
 ###
 
