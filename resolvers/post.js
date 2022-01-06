@@ -156,7 +156,7 @@ module.exports = {
       }
 
       posts = await model.Post.find({ cursorQuery, postType: type })
-        .sort({ id: -1 })
+        .sort({ dateTime: -1 })
         .limit(limit);
       if (type) {
         if (user.userType == 0) {
@@ -165,7 +165,7 @@ module.exports = {
             ownerID: { $in: [user._id, user.dietitianID] },
             postType: type,
           })
-            .sort({ id: -1 })
+            .sort({ dateTime: -1 })
             .limit(limit);
         } else if (user.userType == 1) {
           const cList = await model.User.find({
@@ -176,7 +176,7 @@ module.exports = {
             ownerID: { $in: [user._id, ...cList] },
             postType: type,
           })
-            .sort({ id: -1 })
+            .sort({ dateTime: -1 })
             .limit(limit);
         }
       }
