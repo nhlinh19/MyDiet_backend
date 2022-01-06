@@ -158,7 +158,6 @@ module.exports = {
         message: "Not valid user.",
       });
     }
-    console.log(user);
     let { fullname, email, phoneNumber, about } = req.body;
 
     // Check for uniqueness
@@ -295,7 +294,7 @@ module.exports = {
         const avatarStream = await fs.readFileSync(avatar.path);
         const path = `users/avatar/${user._id}.${avatar.path.split(".").pop()}`;
         const location = await uploadImage(avatarStream, path);
-
+        console.log(avatar.path);
         if (!location) {
           return res.json({
             status: 0,
@@ -314,6 +313,7 @@ module.exports = {
         );
         return res.json({
           status: 1,
+          data: location,
           message: "Uploaded avatar successfully.",
         });
       });
@@ -665,6 +665,24 @@ module.exports = {
       return res.json({
         status: 0,
         message: "Error in removing dietitian.",
+      });
+    }
+  },
+  findDietitian: async (req, res) => {
+    let { name } = req.body;
+    try {
+      list = await model.User.find({
+        $and: [{ fullname: { $regex: name, $options: "i" } }, { userType: 1 }],
+      }).limit(10);
+      return res.json({
+        status: 1,
+        message: "List retrieved",
+        data: list,
+      });
+    } catch (error) {
+      return res.json({
+        status: 0,
+        message: "Cannot find dietitian",
       });
     }
   },

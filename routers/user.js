@@ -19,6 +19,7 @@ userRouter.post("/upload_avatar", getUser, userResolver.uploadAvatar);
 userRouter.get("/client_list", getUser, userResolver.clientList);
 userRouter.get("/dietitian_list", getUser, userResolver.dietitianList);
 userRouter.get("/request_list", getUser, userResolver.requestList);
+userRouter.post("/find_dietitian", getUser, userResolver.findDietitian);
 userRouter.post("/add_dietitian", getUser, userResolver.addDietitian);
 userRouter.post("/remove_dietitian", getUser, userResolver.removeDietitian);
 
