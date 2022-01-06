@@ -10,11 +10,7 @@ userRouter.post("/update", getUser, userResolver.updateUser);
 userRouter.post("/change_password", getUser, userResolver.changePassword);
 userRouter.post("/update_request", getUser, userResolver.requestTobeDietitian);
 userRouter.post("/register_dietitian", getUser, userResolver.registerDietitian);
-userRouter.get(
-  "/personal_dietitian",
-  getUser,
-  userResolver.myPersonalDietitian
-);
+userRouter.get("/personal_dietitian", getUser, userResolver.myPersonalDietitian);
 userRouter.post("/upload_avatar", getUser, userResolver.uploadAvatar);
 userRouter.get("/client_list", getUser, userResolver.clientList);
 userRouter.get("/dietitian_list", getUser, userResolver.dietitianList);
@@ -22,5 +18,6 @@ userRouter.get("/request_list", getUser, userResolver.requestList);
 userRouter.post("/find_dietitian", getUser, userResolver.findDietitian);
 userRouter.post("/add_dietitian", getUser, userResolver.addDietitian);
 userRouter.post("/remove_dietitian", getUser, userResolver.removeDietitian);
+userRouter.get('/unsubscribe_dietitian', getUser, userResolver.unsubscribeDietitian);
 
 module.exports = userRouter;
