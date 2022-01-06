@@ -146,6 +146,14 @@ module.exports = {
         user.password = undefined;
         user.ignored_list = undefined;
 
+<<<<<<< HEAD
+=======
+    // Check for uniqueness
+    if (email && email != user.email) {
+      const existEmail = await model.User.findOne({ email });
+      console.log(existEmail);
+      if (existEmail) {
+>>>>>>> parent of 17c158b... Update user.js
         return res.json({
             status: 1,
             message: 'Signed in successfully.',
