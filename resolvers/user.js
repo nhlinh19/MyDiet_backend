@@ -135,6 +135,7 @@ module.exports = {
             });
         }
 
+<<<<<<< HEAD
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
             return res.json({
@@ -145,6 +146,35 @@ module.exports = {
         
         user.password = undefined;
         user.ignored_list = undefined;
+=======
+    user.password = undefined;
+    user.ignored_list = undefined;
+
+    return res.json({
+      status: 1,
+      message: "Signed in successfully.",
+      data: {
+        token: jwt.sign(
+          {
+            id: user._id,
+          },
+          process.env.JWT_SECRET
+        ),
+        user,
+      },
+    });
+  },
+  updateUser: async (req, res) => {
+    const user = await model.User.findById(req.user.id);
+    if (!user) {
+      return res.json({
+        status: 0,
+        message: "Not valid user.",
+      });
+    }
+    console.log(user);
+    let { fullname, email, phoneNumber, about } = req.body;
+>>>>>>> parent of 9900254... fix ava
 
 <<<<<<< HEAD
 =======
@@ -426,11 +456,107 @@ module.exports = {
         }
         else
         {
+<<<<<<< HEAD
             return res.json({
                 status: 0,
                 message: 'Dietitian id is undefined.'
             })
         }
+=======
+          new: true,
+        }
+      );
+
+      updatedUser.password = undefined;
+      updatedUser.ignored_list = undefined;
+
+      return res.json({
+        status: 1,
+        message: "Changed password successfully.",
+        data: updatedUser,
+      });
+    } catch (error) {
+      return res.json({
+        status: 0,
+        message: "Error in changing password.",
+      });
+    }
+  },
+  uploadAvatar: async (req, res) => {
+    try {
+      const user = await model.User.findById(req.user.id);
+      if (!user) {
+        return res.json({
+          status: 0,
+          message: "Not valid user.",
+        });
+      }
+
+      const form = new multiparty.Form();
+      form.parse(req, async (error, fields, files) => {
+        if (error) {
+          return res.json({
+            status: 0,
+            message: "Cannot parse image.",
+          });
+        }
+
+        let avatar = files.avatar[0];
+        if (!avatar) {
+          return res.json({
+            status: 0,
+            message: "Cannot parse avatar image.",
+          });
+        }
+
+        const avatarStream = await fs.readFileSync(avatar.path);
+        const path = `users/avatar/${user._id}.${avatar.path.split(".").pop()}`;
+        const location = await uploadImage(avatarStream, path);
+
+        if (!location) {
+          return res.json({
+            status: 0,
+            message: "Cannot upload avatar.",
+          });
+        }
+        await model.User.findOneAndUpdate(
+          {
+            _id: user._id,
+          },
+          {
+            $set: {
+              avatar: location,
+            },
+          }
+        );
+        return res.json({
+          status: 1,
+          message: "Uploaded avatar successfully.",
+        });
+      });
+    } catch (error) {
+      return res.json({
+        status: 0,
+        message: "Cannot upload avatar.",
+      });
+    }
+  },
+  requestTobeDietitian: async (req, res) => {
+    const user = await model.User.findById(req.user.id);
+    if (!user) {
+      return res.json({
+        status: 0,
+        message: "Not valid user.",
+      });
+    }
+
+    if (user.userType != 0) {
+      return res.json({
+        status: 0,
+        message: "Current account is not user account.",
+      });
+    }
+>>>>>>> parent of 9900254... fix ava
 
         try {
             const updatedUser = await model.User.findOneAndUpdate(
@@ -659,6 +785,7 @@ module.exports = {
         }
         else
         {
+<<<<<<< HEAD
             return res.json({
                 status: 0,
                 message: 'Dietitian id is undefined.'
@@ -766,3 +893,25 @@ module.exports = {
         }
     }
 }
+=======
+          new: true,
+        }
+      );
+
+      updatedDietitian.password = undefined;
+      updatedDietitian.ignored_list = undefined;
+
+      return res.json({
+        status: 1,
+        message: "Successfully remove dietitian.",
+        data: updatedDietitian,
+      });
+    } catch (error) {
+      return res.json({
+        status: 0,
+        message: "Error in removing dietitian.",
+      });
+    }
+  },
+};
+>>>>>>> parent of 9900254... fix ava
