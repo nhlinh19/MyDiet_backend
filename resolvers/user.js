@@ -163,7 +163,6 @@ module.exports = {
     // Check for uniqueness
     if (email && email != user.email) {
       const existEmail = await model.User.findOne({ email });
-      console.log(existEmail);
       if (existEmail) {
         return res.json({
           status: 0,
