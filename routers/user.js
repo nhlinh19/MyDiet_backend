@@ -18,5 +18,6 @@ userRouter.get("/request_list", getUser, userResolver.requestList);
 userRouter.post("/add_dietitian", getUser, userResolver.addDietitian);
 userRouter.post("/remove_dietitian", getUser, userResolver.removeDietitian);
 userRouter.get('/unsubscribe_dietitian', getUser, userResolver.unsubscribeDietitian);
+userRouter.post("/find_dietitian", getUser, userResolver.findDietitian);
 
 module.exports = userRouter;
