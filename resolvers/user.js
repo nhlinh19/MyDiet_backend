@@ -73,7 +73,7 @@ module.exports = {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         
-        const avatar = "https://my-diet.s3.ap-southeast-1.amazonaws.com/users/avatar/avatar.png";
+        const avatar = "https://my-diet-aws.s3.ap-southeast-1.amazonaws.com/users/avatar/avatar.png";
         //console.log(avatar);
 
         try {
