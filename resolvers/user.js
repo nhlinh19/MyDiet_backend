@@ -73,8 +73,8 @@ module.exports = {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         
-        const avatar = gravatar(email);
-        console.log(avatar);
+        const avatar = "https://my-diet.s3.ap-southeast-1.amazonaws.com/users/avatar/avatar.png";
+        //console.log(avatar);
 
         try {
             const user = new model.User(
