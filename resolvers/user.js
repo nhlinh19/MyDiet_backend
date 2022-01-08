@@ -327,6 +327,7 @@ module.exports = {
                 )
                 return res.json({
                     status: 1,
+			data: location,
                     message: 'Uploaded avatar successfully.'
                 });
             });
